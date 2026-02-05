@@ -10,6 +10,8 @@ export function WineDetailPage() {
   const { id } = useParams()
   const wine = wines.find((item) => item.id === id)
   const [showMatchInfo, setShowMatchInfo] = useState(false)
+  const baseUrl = import.meta.env.BASE_URL
+  const vineyardSrc = `${baseUrl}${vineyardImage.replace(/^\//, '')}`
 
   const matchInfo = useMemo(() => {
     const stored = localStorage.getItem('vivino:taste-preferences')
@@ -108,7 +110,7 @@ export function WineDetailPage() {
       <div className="relative h-[360px] w-full overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${vineyardImage})` }}
+          style={{ backgroundImage: `url(${vineyardSrc})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
 
@@ -141,7 +143,7 @@ export function WineDetailPage() {
             <div className="mt-8 flex items-end justify-between">
               <div className="relative">
                 <img
-                  src={wine.imagePath}
+                  src={`${baseUrl}${wine.imagePath.replace(/^\//, '')}`}
                   alt={`${wine.name} bottle`}
                   className="h-56 drop-shadow-xl"
                 />

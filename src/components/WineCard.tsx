@@ -16,16 +16,20 @@ const flagByCountry: Record<string, string> = {
 }
 
 export function WineCard({ wine, discountPercent, originalPrice }: WineCardProps) {
+  const baseUrl = import.meta.env.BASE_URL
+  const imageSrc = `${baseUrl}${wine.imagePath.replace(/^\//, '')}`
+
   return (
     <div className="relative flex gap-4 rounded-card border border-neutral-200 bg-white p-5 shadow-soft">
-      <div className="relative flex h-32 w-24 items-center justify-center rounded-[18px] bg-neutral-100">
+      <div className="relative flex h-[140px] w-[98px] items-center justify-center rounded-[18px] bg-neutral-100">
         <span className="absolute left-2 top-2 rounded-pill bg-wine-600 px-2 py-0.5 text-[11px] font-semibold text-white">
           -{discountPercent}%
         </span>
         <img
-          src={wine.imagePath}
+          src={imageSrc}
           alt={`${wine.name} bottle`}
-          className="h-28 w-16 object-contain"
+          loading="lazy"
+          className="h-[126px] w-[70px] object-contain"
         />
       </div>
 

@@ -5,16 +5,9 @@ import { WineCard } from '../components/WineCard'
 import { TopBar } from '../components/TopBar'
 import { SortFilterRow } from '../components/SortFilterRow'
 
-const discounts = [50, 33, 10, 20, 15, 25, 40, 30, 18, 12]
+const discounts = [50, 33, 10, 20, 15, 25, 40, 30, 18, 12, 22, 28, 35, 12, 16, 27, 41, 19]
 
 export function Shop() {
-  const rows = Array.from({ length: 10 }, (_, index) => {
-    const wine = wines[index % wines.length]
-    const discountPercent = discounts[index % discounts.length]
-    const originalPrice = Number((wine.price / (1 - discountPercent / 100)).toFixed(2))
-    return { wine, discountPercent, originalPrice }
-  })
-
   return (
     <div className={ds.container}>
       <div className="pt-6">
@@ -22,16 +15,21 @@ export function Shop() {
         <SortFilterRow />
       </div>
 
-      <div className="mt-6 grid gap-7 pb-6">
-        {rows.map(({ wine, discountPercent, originalPrice }, index) => (
-          <Link key={`${wine.id}-${index}`} to={`/wine/${wine.id}`}>
-            <WineCard
-              wine={wine}
-              discountPercent={discountPercent}
-              originalPrice={originalPrice}
-            />
-          </Link>
-        ))}
+      <div className="mt-6 grid gap-5 pb-6">
+        {wines.map((wine, index) => {
+          const discountPercent = discounts[index % discounts.length]
+          const originalPrice = Number((wine.price / (1 - discountPercent / 100)).toFixed(2))
+
+          return (
+            <Link key={`${wine.id}-${index}`} to={`/wine/${wine.id}`}>
+              <WineCard
+                wine={wine}
+                discountPercent={discountPercent}
+                originalPrice={originalPrice}
+              />
+            </Link>
+          )
+        })}
       </div>
     </div>
   )
