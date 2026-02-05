@@ -1,5 +1,4 @@
 import { NavLink } from 'react-router-dom'
-import { ds } from '../styles/designSystem'
 
 const navItems = [
   { label: 'Home', to: '/home', icon: 'home' },

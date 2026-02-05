@@ -32,7 +32,7 @@ export function BottomSheet({
       const collapsedVisible = viewportHeight * collapsedRatio
       const nextMaxTranslate = Math.max(sheetHeight - collapsedVisible, 0)
       setMaxTranslate(nextMaxTranslate)
-      setTranslate((current) => (isExpanded ? 0 : nextMaxTranslate))
+      setTranslate(() => (isExpanded ? 0 : nextMaxTranslate))
 
       if (sheetRef.current) {
         sheetRef.current.style.height = `${sheetHeight}px`
