@@ -35,7 +35,7 @@ export function WineDetailsSheet({ wine }: WineDetailsSheetProps) {
         </div>
         
         {/* Content padding */}
-        <div className="px-6 pb-6">
+        <div className="px-6 pb-20">
           
           {/* Rate & Actions buttons */}
           <div className="flex items-center justify-center gap-4 mb-6">
