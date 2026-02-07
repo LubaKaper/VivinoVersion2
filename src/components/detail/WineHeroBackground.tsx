@@ -9,7 +9,15 @@ export function WineHeroBackground({ wine }: WineHeroBackgroundProps) {
   const baseUrl = import.meta.env.BASE_URL
 
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden">
+    <div
+      className="fixed inset-0 z-0 overflow-hidden"
+      style={{
+        transform:
+          'translateY(calc((1 - var(--sheet-progress, 0)) * 14px)) scale(calc(1 - (var(--sheet-progress, 0) * 0.02)))',
+        transformOrigin: 'center top',
+        transition: 'transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1)'
+      }}
+    >
       {/* Background gradient */}
       <div 
         className="absolute inset-0"

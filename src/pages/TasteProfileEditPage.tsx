@@ -1,8 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { ds } from '../styles/designSystem'
-import { wines } from '../data/wines'
-import { WineCard } from '../components/WineCard'
 
 const wineTypes = [
   'Red',
@@ -25,10 +22,27 @@ const tasteGroups = [
 const priceRanges = ['Under $15', '$15–25', '$25–40', '$40–80', '$80+']
 
 export function TasteProfileEditPage() {
-  const navigate = useNavigate()
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [selectedTastes, setSelectedTastes] = useState<string[]>([])
   const [selectedPrices, setSelectedPrices] = useState<string[]>([])
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saved'>('idle')
+
+  useEffect(() => {
+    const stored = localStorage.getItem('vivinoPreferences')
+    if (!stored) return
+    try {
+      const parsed = JSON.parse(stored) as {
+        types?: string[]
+        tastes?: string[]
+        prices?: string[]
+      }
+      setSelectedTypes(Array.isArray(parsed.types) ? parsed.types : [])
+      setSelectedTastes(Array.isArray(parsed.tastes) ? parsed.tastes : [])
+      setSelectedPrices(Array.isArray(parsed.prices) ? parsed.prices : [])
+    } catch {
+      // ignore malformed storage
+    }
+  }, [])
 
   const toggleSelection = (
     value: string,
@@ -49,82 +63,6 @@ export function TasteProfileEditPage() {
         : 'border-neutral-200 bg-white text-neutral-700 shadow-[0_2px_8px_rgba(0,0,0,0.06)]'
     }`
 
-  const filteredWines = useMemo(() => {
-    // Helper predicates for taste group selections
-    const matchesSweetness = (value: number) => {
-      if (!selectedTastes.some((item) => ['Dry', 'Off-dry', 'Sweet'].includes(item))) {
-        return true
-      }
-      if (selectedTastes.includes('Dry')) return value <= 2
-      if (selectedTastes.includes('Off-dry')) return value === 3
-      if (selectedTastes.includes('Sweet')) return value >= 4
-      return true
-    }
-
-    const matchesBody = (value: number) => {
-      if (!selectedTastes.some((item) => ['Light', 'Medium', 'Full'].includes(item))) {
-        return true
-      }
-      if (selectedTastes.includes('Light')) return value <= 2
-      if (selectedTastes.includes('Medium')) return value === 3
-      if (selectedTastes.includes('Full')) return value >= 4
-      return true
-    }
-
-    const matchesFreshness = (value: number) => {
-      if (!selectedTastes.some((item) => ['Soft', 'Acidic'].includes(item))) {
-        return true
-      }
-      if (selectedTastes.includes('Soft')) return value <= 2
-      if (selectedTastes.includes('Acidic')) return value >= 3
-      return true
-    }
-
-    const matchesStructure = (value: number) => {
-      if (!selectedTastes.some((item) => ['Smooth', 'Tannic', 'Bold'].includes(item))) {
-        return true
-      }
-      if (selectedTastes.includes('Smooth')) return value <= 2
-      if (selectedTastes.includes('Tannic')) return value >= 3
-      if (selectedTastes.includes('Bold')) return value >= 4
-      return true
-    }
-
-    const matchesPrice = (price: number) => {
-      if (selectedPrices.length === 0) return true
-      return selectedPrices.some((range) => {
-        if (range === 'Under $15') return price < 15
-        if (range === '$15–25') return price >= 15 && price <= 25
-        if (range === '$25–40') return price > 25 && price <= 40
-        if (range === '$40–80') return price > 40 && price <= 80
-        if (range === '$80+') return price > 80
-        return false
-      })
-    }
-
-    return wines.filter((wine) => {
-      const isNatural = wine.name.toLowerCase().includes('natural')
-      const typeSelected =
-        selectedTypes.length === 0 ||
-        selectedTypes.includes(wine.type) ||
-        (selectedTypes.includes('Natural') && isNatural)
-
-      if (!typeSelected) return false
-
-      return (
-        matchesSweetness(wine.sweetness) &&
-        matchesBody(wine.body) &&
-        matchesFreshness(wine.acidity) &&
-        matchesStructure(wine.tannin) &&
-        matchesPrice(wine.price)
-      )
-    })
-  }, [selectedPrices, selectedTastes, selectedTypes])
-
-  useEffect(() => {
-    console.log('Filtered wines:', filteredWines.map((wine) => wine.id))
-  }, [filteredWines])
-
   const handleSave = () => {
     localStorage.setItem(
       'vivinoPreferences',
@@ -134,17 +72,16 @@ export function TasteProfileEditPage() {
         prices: selectedPrices
       })
     )
-    navigate('/shop')
+    setSaveStatus('saved')
+    window.setTimeout(() => setSaveStatus('idle'), 1500)
   }
 
   return (
     <div className={ds.page}>
-      <div className={`${ds.container} pb-32 pt-8`}>
+      <div className={`${ds.container} pb-48 pt-8`}>
         <div>
           <h1 className="text-2xl font-semibold text-neutral-900">My Taste tuner</h1>
-          <p className="mt-2 text-sm text-neutral-500">
-            Get better Wines
-          </p>
+          <p className="mt-2 text-sm text-neutral-500">Get better wines</p>
         </div>
 
         <section className="mt-6 rounded-card border border-neutral-200 bg-white p-5 shadow-soft">
@@ -215,35 +152,14 @@ export function TasteProfileEditPage() {
           </div>
         </section>
 
-        <section className="mt-6 rounded-card border border-neutral-200 bg-white p-5 shadow-soft">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-neutral-900">Preview</h2>
-            <p className="text-xs text-neutral-500">
-              Showing {filteredWines.length} of {wines.length} wines
-            </p>
-          </div>
-          <div className="mt-4 grid gap-4">
-            {filteredWines.slice(0, 6).map((wine) => (
-              <WineCard
-                key={wine.id}
-                wine={wine}
-                discountPercent={20}
-                originalPrice={Number((wine.price / 0.8).toFixed(2))}
-              />
-            ))}
-          </div>
-        </section>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[430px] -translate-x-1/2 px-5 pb-[calc(20px+env(safe-area-inset-bottom))]">
-        <p className="mb-2 text-center text-xs text-neutral-500">
-          Applies to Shop recommendations
-        </p>
+      <div className="fixed bottom-[84px] left-1/2 z-40 w-full max-w-[430px] -translate-x-1/2 px-5 pb-[calc(20px+env(safe-area-inset-bottom))]">
         <button
           onClick={handleSave}
-          className="w-full rounded-pill bg-black py-4 text-base font-semibold text-white shadow-soft"
+          className="w-full rounded-pill border border-[#3F5668] bg-gradient-to-b from-[#7F97AB] to-[#4E667A] py-3 text-sm font-semibold text-white shadow-[0_18px_32px_rgba(0,0,0,0.24)] ring-1 ring-white/25 transition-transform duration-150 ease-out active:translate-y-[1px]"
         >
-          Save changes
+          {saveStatus === 'saved' ? 'Saved' : 'Save changes'}
         </button>
       </div>
     </div>

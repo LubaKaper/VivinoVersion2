@@ -4,7 +4,7 @@ const navItems = [
   { label: 'Home', to: '/home', icon: 'home' },
   { label: 'Shop', to: '/shop', icon: 'shop' },
   { label: 'Camera', to: '/camera', icon: 'camera', isCenter: true },
-  { label: 'My Wines', to: '/my-wines', icon: 'bottle' },
+  { label: 'My Taste', to: '/taste-profile/edit', icon: 'bottle' },
   { label: 'More', to: '/more', icon: 'more' }
 ]
 

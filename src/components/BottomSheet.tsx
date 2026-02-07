@@ -18,12 +18,14 @@ export function BottomSheet({
   expandedContent
 }: BottomSheetProps) {
   const sheetRef = useRef<HTMLDivElement | null>(null)
+  const contentRef = useRef<HTMLDivElement | null>(null)
   const [translate, setTranslate] = useState(0)
   const [maxTranslate, setMaxTranslate] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const startYRef = useRef(0)
   const startTranslateRef = useRef(0)
+  const startScrollTopRef = useRef(0)
 
   useLayoutEffect(() => {
     const updateMeasurements = () => {
@@ -55,12 +57,14 @@ export function BottomSheet({
     setIsDragging(true)
     startYRef.current = event.clientY
     startTranslateRef.current = translate
+    startScrollTopRef.current = contentRef.current?.scrollTop ?? 0
     event.currentTarget.setPointerCapture(event.pointerId)
   }
 
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging) return
     const delta = event.clientY - startYRef.current
+    if (delta > 0 && startScrollTopRef.current > 0) return
     const nextTranslate = clamp(startTranslateRef.current + delta, 0, maxTranslate)
     setTranslate(nextTranslate)
   }
@@ -75,24 +79,39 @@ export function BottomSheet({
 
   const progress = maxTranslate === 0 ? 1 : 1 - translate / maxTranslate
 
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty('--sheet-progress', progress.toFixed(4))
+    return () => {
+      root.style.removeProperty('--sheet-progress')
+    }
+  }, [progress])
+
   return (
     <div
       ref={sheetRef}
       className="fixed bottom-0 left-1/2 z-30 w-full max-w-[430px] -translate-x-1/2"
       style={{
         transform: `translate(-50%, ${translate}px)`,
-        transition: isDragging ? 'none' : 'transform 220ms ease'
+        transition: isDragging ? 'none' : 'transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1)',
+        willChange: 'transform'
       }}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
     >
-      <div className="h-full rounded-t-[28px] bg-white px-5 pb-10 pt-3 shadow-card">
-        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-neutral-200" />
+      <div className="flex h-full flex-col rounded-t-[28px] bg-white px-5 pt-3 shadow-card">
+        <div
+          className="mx-auto mb-3 flex h-6 w-full items-center justify-center"
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          style={{ touchAction: 'none' }}
+        >
+          <div className="h-1.5 w-12 rounded-full bg-neutral-200" />
+        </div>
         <div>{collapsedContent}</div>
         <div
-          className="mt-6"
+          ref={contentRef}
+          className="mt-6 flex-1 overflow-y-auto pb-[calc(24px+env(safe-area-inset-bottom))]"
           style={{ opacity: progress, pointerEvents: progress > 0.4 ? 'auto' : 'none' }}
         >
           {expandedContent}

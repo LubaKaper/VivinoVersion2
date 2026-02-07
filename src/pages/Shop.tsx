@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { wines } from '../data/wines'
 import { ds } from '../styles/designSystem'
@@ -9,6 +9,7 @@ import { SortFilterRow } from '../components/SortFilterRow'
 const discounts = [50, 33, 10, 20, 15, 25, 40, 30, 18, 12, 22, 28, 35, 12, 16, 27, 41, 19]
 
 export function Shop() {
+  const location = useLocation()
   const [preferences, setPreferences] = useState<{
     types: string[]
     tastes: string[]
@@ -27,15 +28,18 @@ export function Shop() {
         tastes?: string[]
         prices?: string[]
       }
-      setPreferences({
+      const nextPreferences = {
         types: parsed.types ?? [],
         tastes: parsed.tastes ?? [],
         prices: parsed.prices ?? []
-      })
+      }
+      const hasFilters =
+        nextPreferences.types.length > 0 || nextPreferences.prices.length > 0
+      setPreferences(hasFilters ? nextPreferences : null)
     } catch {
       setPreferences(null)
     }
-  }, [])
+  }, [location.key])
 
   const filteredWines = useMemo(() => {
     if (!preferences) return wines
@@ -80,16 +84,20 @@ export function Shop() {
       </div>
 
       {appliedFilters.length ? (
-        <div className="mt-3 flex items-center justify-between rounded-pill border border-neutral-200 bg-white px-4 py-2 text-xs text-neutral-600 shadow-soft">
-          <span className="truncate">
-            Filters: {appliedFilters.join(', ')}
-          </span>
+        <div className="mt-3 flex items-center justify-between text-xs text-neutral-500">
+          <span>Filtered by your taste preferences</span>
           <button
             onClick={handleClear}
-            className="ml-3 text-xs font-semibold text-wine-600"
+            className="text-xs font-semibold text-wine-600"
           >
-            Clear
+            Clear filters
           </button>
+        </div>
+      ) : null}
+
+      {filteredWines.length === 0 ? (
+        <div className="mt-6 rounded-card border border-neutral-200 bg-white p-5 text-sm text-neutral-600 shadow-soft">
+          No wines match your current taste. Try adjusting My Taste.
         </div>
       ) : null}
 

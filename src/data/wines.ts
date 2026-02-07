@@ -82,7 +82,7 @@ export const wines: Wine[] = [
     notes: ['strawberry', 'citrus', 'white peach'],
     foodPairing: ['salads', 'seafood', 'soft cheese'],
     imageGradient: 'linear-gradient(135deg, #F9D4DA 0%, #E8768F 55%, #B92B4E 100%)',
-    imagePath: '/images/bottles/wine-red-3.png'
+    imagePath: '/images/bottles/wine-rose-1.png'
   },
   {
     id: '4',
@@ -103,7 +103,7 @@ export const wines: Wine[] = [
     notes: ['green apple', 'vanilla', 'toast'],
     foodPairing: ['roast chicken', 'pasta', 'creamy sauces'],
     imageGradient: 'linear-gradient(135deg, #F9F7F4 0%, #E5F3E6 55%, #9ED39E 100%)',
-    imagePath: '/images/bottles/wine-red-4.png'
+    imagePath: '/images/bottles/wine-white-1.png'
   },
   {
     id: '5',
@@ -124,7 +124,7 @@ export const wines: Wine[] = [
     notes: ['lime', 'gooseberry', 'herbs'],
     foodPairing: ['shellfish', 'goat cheese', 'fresh herbs'],
     imageGradient: 'linear-gradient(135deg, #E5F3E6 0%, #9ED39E 45%, #3D9140 100%)',
-    imagePath: '/images/bottles/wine-red-5.png'
+    imagePath: '/images/bottles/wine-white-2.png'
   },
   {
     id: '6',
@@ -145,7 +145,7 @@ export const wines: Wine[] = [
     notes: ['plum', 'pepper', 'smoke'],
     foodPairing: ['bbq', 'lamb', 'hard cheese'],
     imageGradient: 'linear-gradient(135deg, #2F0715 0%, #6B152E 50%, #B92B4E 100%)',
-    imagePath: '/images/bottles/wine-rose-1.png'
+    imagePath: '/images/bottles/wine-red-3.png'
   },
   {
     id: '7',
@@ -166,7 +166,7 @@ export const wines: Wine[] = [
     notes: ['pear', 'white flowers', 'almond'],
     foodPairing: ['aperitivo', 'fruit', 'soft cheese'],
     imageGradient: 'linear-gradient(135deg, #F9F7F4 0%, #F3A7B5 50%, #E8768F 100%)',
-    imagePath: '/images/bottles/wine-rose-2.png'
+    imagePath: '/images/bottles/wine-sparkling-2.png'
   },
   {
     id: '8',
@@ -187,7 +187,7 @@ export const wines: Wine[] = [
     notes: ['dark cherry', 'leather', 'spice'],
     foodPairing: ['jamón', 'roasted vegetables', 'aged cheese'],
     imageGradient: 'linear-gradient(135deg, #3B0A16 0%, #8A1D3B 55%, #D84A68 100%)',
-    imagePath: '/images/bottles/wine-rose-3.png'
+    imagePath: '/images/bottles/wine-red-4.png'
   },
   {
     id: '9',
